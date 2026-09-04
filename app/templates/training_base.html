@@ -3,38 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta name="color-scheme" content="dark light" />
-  <script>
-    (function () {
-      var m = window.matchMedia("(prefers-color-scheme: dark)");
-      var set = function () {
-        document.documentElement.setAttribute("data-theme", m.matches ? "dark" : "light");
-      };
-      set();
-      m.addEventListener("change", set);
-    })();
-  </script>
+  <meta name="color-scheme" content="dark" />
   <meta name="csrf-token" content="{{ request.session.get('csrf_token','') }}" />
   <title>{% block title %}Training Tracker{% endblock %}</title>
   <link rel="manifest" href="/training/manifest.json" />
   <link rel="icon" href="/training/static/icons/icon-192.png" />
-  <link rel="stylesheet" href="/static/vendor/pico.min.css" />
   <link rel="stylesheet" href="/static/css/style.css" />
   <script src="/static/vendor/htmx.min.js" defer></script>
   <script src="/static/js/app.js" defer></script>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="/training/">🏋️ Training</a>
-    <nav class="tabs">
-      <a href="/training/" class="{{ 'active' if active_page == 'dashboard' }}">今日</a>
-      <a href="/training/calendar" class="{{ 'active' if active_page == 'calendar' }}">日历</a>
-      <a href="/training/stats" class="{{ 'active' if active_page == 'stats' }}">统计</a>
-      <a href="/training/settings" class="{{ 'active' if active_page == 'settings' }}">设置</a>
+  <header class="app-header">
+    <a class="app-brand" href="/training/">
+      <span class="brand-mark">🏋️</span>
+      <span>Training</span>
+    </a>
+    <nav class="app-nav">
+      <a href="/training/" class="nav-link {{ 'active' if active_page == 'dashboard' }}">今日</a>
+      <a href="/training/calendar" class="nav-link {{ 'active' if active_page == 'calendar' }}">日历</a>
+      <a href="/training/stats" class="nav-link {{ 'active' if active_page == 'stats' }}">统计</a>
+      <a href="/training/settings" class="nav-link {{ 'active' if active_page == 'settings' }}">设置</a>
     </nav>
   </header>
 
-  <main class="container training">
+  <main class="container">
     {% block content %}{% endblock %}
   </main>
 

@@ -4,20 +4,20 @@
 <h1 class="page-title">训练统计</h1>
 
 <section class="stats-grid">
-  <div class="stat-card"><span class="stat-value">{{ summary.completion_rate_this_week }}%</span><span class="stat-label">本周完成率</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.total_completed }}</span><span class="stat-label">总训练次数</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.consecutive_completed_weeks }}</span><span class="stat-label">连续完成周数</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.pullup_total }}</span><span class="stat-label">引体累计次数</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.pullup_max or '—' }}</span><span class="stat-label">引体单组最高</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.plank_max_seconds|seconds_display or '—' }}</span><span class="stat-label">平板最长时间</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.run_this_week_km }}</span><span class="stat-label">本周跑量 (km)</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.run_total_km }}</span><span class="stat-label">累计跑量 (km)</span></div>
-  <div class="stat-card"><span class="stat-value">{{ summary.run_longest_km }}</span><span class="stat-label">最长跑步距离 (km)</span></div>
-  <div class="stat-card"><span class="stat-value">{{ fmt_duration(summary.best_5k_seconds) }}</span><span class="stat-label">5km 最佳成绩</span></div>
+  <div class="stat-card"><span class="stat-icon">📈</span><span class="stat-value">{{ summary.completion_rate_this_week }}%</span><span class="stat-label">本周完成率</span></div>
+  <div class="stat-card"><span class="stat-icon">✅</span><span class="stat-value">{{ summary.total_completed }}</span><span class="stat-label">总训练次数</span></div>
+  <div class="stat-card"><span class="stat-icon">🔥</span><span class="stat-value">{{ summary.consecutive_completed_weeks }}</span><span class="stat-label">连续完成周数</span></div>
+  <div class="stat-card"><span class="stat-icon">💪</span><span class="stat-value">{{ summary.pullup_total }}</span><span class="stat-label">引体累计次数</span></div>
+  <div class="stat-card"><span class="stat-icon">💪</span><span class="stat-value">{{ summary.pullup_max or '—' }}</span><span class="stat-label">引体单组最高</span></div>
+  <div class="stat-card"><span class="stat-icon">🧘</span><span class="stat-value">{{ summary.plank_max_seconds|seconds_display or '—' }}</span><span class="stat-label">平板最长时间</span></div>
+  <div class="stat-card"><span class="stat-icon">🏃</span><span class="stat-value">{{ summary.run_this_week_km }}</span><span class="stat-label">本周跑量 (km)</span></div>
+  <div class="stat-card"><span class="stat-icon">🏃</span><span class="stat-value">{{ summary.run_total_km }}</span><span class="stat-label">累计跑量 (km)</span></div>
+  <div class="stat-card"><span class="stat-icon">🏆</span><span class="stat-value">{{ summary.run_longest_km }}</span><span class="stat-label">最长跑步距离 (km)</span></div>
+  <div class="stat-card"><span class="stat-icon">⏱️</span><span class="stat-value">{{ fmt_duration(summary.best_5k_seconds) }}</span><span class="stat-label">5km 最佳成绩</span></div>
 </section>
 
 {% if charts.labels %}
-<section class="charts">
+<section>
   <div class="chart-block">
     <h3>每周训练完成率</h3>
     <canvas id="chart-completion"></canvas>

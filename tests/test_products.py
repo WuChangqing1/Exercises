@@ -56,6 +56,12 @@ def test_invalid_config_handled(tmp_path):
 
 
 def test_hub_renders(client):
-    resp = client.get("/hub/")
+    resp = client.get("/")
     assert resp.status_code == 200
     assert "Training Tracker" in resp.text
+
+
+def test_hub_redirects_old_path(client):
+    resp = client.get("/hub/", follow_redirects=False)
+    assert resp.status_code == 301
+    assert resp.headers["location"] == "/"

@@ -1,9 +1,13 @@
+# Product Hub registry example. Copy to instance/products.yaml for production.
+# Fields: id, name, description, url, icon, accent, accentRGB, tags, enabled, order.
 products:
   - id: training
     name: Training Tracker
-    description: Personal workout planning and training tracking.
+    description: Personal workout planning and tracking.
     url: /training/
+    icon: "🏋️"
+    accent: "#6366f1"
+    accentRGB: "99, 102, 241"
+    tags: [training, logging]
     enabled: true
     order: 10
-    icon: training
-    category: fitness

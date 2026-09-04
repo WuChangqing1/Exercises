@@ -1,48 +1,182 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark light" />
-  <script>
-    (function () {
-      var m = window.matchMedia("(prefers-color-scheme: dark)");
-      var set = function () {
-        document.documentElement.setAttribute("data-theme", m.matches ? "dark" : "light");
-      };
-      set();
-      m.addEventListener("change", set);
-    })();
-  </script>
-  <title>{{ title or "Fengz Lab" }}</title>
-  <link rel="stylesheet" href="/static/vendor/pico.min.css" />
-  <link rel="stylesheet" href="/static/css/style.css" />
+  <meta name="color-scheme" content="dark" />
+  <title>Fengz Lab · Products &amp; Experiments</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #080c14;
+      color: #e0e0e0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    .main-container { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 60px 24px 80px; }
+
+    .header { text-align: center; margin-bottom: 60px; }
+    .header .avatar {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 34px; margin-bottom: 20px;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.35);
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .header h1 {
+      font-size: 38px; font-weight: 700;
+      background: linear-gradient(135deg, #e0e7ff, #a5b4fc, #c4b5fd);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      margin-bottom: 8px; letter-spacing: 2px;
+    }
+    .header .subtitle { color: #6b7280; font-size: 15px; letter-spacing: 4px; text-transform: uppercase; }
+
+    .divider { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 50px; }
+    .divider::before, .divider::after {
+      content: ''; height: 1px; width: 60px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+    }
+    .divider .dot { width: 6px; height: 6px; background: #6366f1; border-radius: 50%; box-shadow: 0 0 12px #6366f1; }
+
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+
+    .project-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 32px 28px;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      text-decoration: none; color: inherit; display: block;
+    }
+    .project-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 20px; padding: 1.5px;
+      background: linear-gradient(135deg, transparent 40%, var(--card-accent, #6366f1));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0; transition: opacity 0.35s ease;
+    }
+    .project-card:hover::before { opacity: 1; }
+    .project-card:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(var(--card-accent-rgb, 99, 102, 241), 0.15);
+    }
+    .project-card .glow-spot {
+      position: absolute; width: 180px; height: 180px; border-radius: 50%;
+      filter: blur(80px); opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+    }
+    .project-card:hover .glow-spot { opacity: 0.25; }
+    .project-card .icon-wrap {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin-bottom: 18px; position: relative; z-index: 1;
+    }
+    .project-card .name { font-size: 22px; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; position: relative; z-index: 1; }
+    .project-card .desc { font-size: 14px; color: #9ca3af; line-height: 1.7; margin-bottom: 20px; position: relative; z-index: 1; }
+    .project-card .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; position: relative; z-index: 1; }
+    .project-card .tag { font-size: 11px; padding: 4px 10px; border-radius: 20px; background: rgba(255, 255, 255, 0.05); color: #9ca3af; border: 1px solid rgba(255, 255, 255, 0.08); }
+    .project-card .arrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 600; color: var(--card-accent, #818cf8);
+      position: relative; z-index: 1; transition: gap 0.25s ease;
+    }
+    .project-card:hover .arrow { gap: 12px; }
+
+    .footer { text-align: center; margin-top: 70px; color: #4b5563; font-size: 13px; letter-spacing: 1px; }
+    .footer .heart { color: #ef4444; animation: heartbeat 1.2s ease-in-out infinite; display: inline-block; }
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.2); } 50% { transform: scale(1); } 75% { transform: scale(1.2); } }
+
+    @media (max-width: 768px) {
+      .main-container { padding: 40px 16px 60px; }
+      .header h1 { font-size: 28px; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card { padding: 24px 20px; }
+    }
+  </style>
 </head>
 <body>
-  <main class="container hub">
-    <header class="hub-header">
+  <canvas id="starfield"></canvas>
+
+  <div class="main-container">
+    <header class="header">
+      <div class="avatar">🚀</div>
       <h1>Fengz Lab</h1>
       <p class="subtitle">Products &amp; Experiments</p>
     </header>
 
-    <section class="product-grid">
+    <div class="divider"><span class="dot"></span></div>
+
+    <div class="projects-grid">
       {% for p in products %}
-      <a class="product-card" href="{{ p.url }}">
-        <div class="product-icon">{{ p.icon or "◆" }}</div>
-        <h2>{{ p.name }}</h2>
-        <p>{{ p.description }}</p>
-        <span class="enter">进入 →</span>
+      <a class="project-card" href="{{ p.url }}"
+         style="--card-accent: {{ p.accent or '#6366f1' }}; --card-accent-rgb: {{ p.accentRGB or '99,102,241' }};">
+        <div class="glow-spot" style="background: {{ p.accent or '#6366f1' }}; top: -40px; right: -40px;"></div>
+        <div class="icon-wrap" style="background: {{ p.accent or '#6366f1' }}22;">{{ p.icon or '◆' }}</div>
+        <div class="name">{{ p.name }}</div>
+        <div class="desc">{{ p.description }}</div>
+        {% if p.tags %}
+        <div class="tag-row">
+          {% for t in p.tags %}<span class="tag">{{ t }}</span>{% endfor %}
+        </div>
+        {% endif %}
+        <span class="arrow">进入 <span style="font-size:16px;">→</span></span>
       </a>
       {% endfor %}
-    </section>
+    </div>
 
-    {% if not products %}
-    <p class="empty">暂无可用产品。</p>
-    {% endif %}
-
-    <footer class="hub-footer">
-      <p>Fengz Lab · Products &amp; Experiments</p>
+    <footer class="footer">
+      Made with <span class="heart">❤</span> &nbsp;·&nbsp; Fengz Lab
     </footer>
-  </main>
+  </div>
+
+  <script>
+    (function initStarfield() {
+      const canvas = document.getElementById('starfield');
+      const ctx = canvas.getContext('2d');
+      let stars = [], w, h;
+      function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; initStars(); }
+      function initStars() {
+        const count = Math.floor((w * h) / 2800);
+        stars = [];
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x: Math.random() * w, y: Math.random() * h,
+            r: Math.random() * 1.6 + 0.3, alpha: Math.random(),
+            speed: Math.random() * 0.008 + 0.003, phase: Math.random() * Math.PI * 2,
+          });
+        }
+      }
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.7);
+        g.addColorStop(0, 'rgba(99, 102, 241, 0.04)');
+        g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+        const now = performance.now() * 0.001;
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
+          const twinkle = 0.4 + 0.6 * Math.sin(now * s.speed * 20 + s.phase);
+          ctx.fillStyle = 'rgba(200, 210, 255, ' + (s.alpha * twinkle) + ')';
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      function loop() { draw(); requestAnimationFrame(loop); }
+      window.addEventListener('resize', resize);
+      resize(); loop();
+    })();
+  </script>
 </body>
 </html>

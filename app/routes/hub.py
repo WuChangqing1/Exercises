@@ -11,23 +11,20 @@ router = APIRouter()
 
 
 @router.get("/")
-def root_redirect() -> RedirectResponse:
-    return RedirectResponse("/hub/", status_code=302)
-
-
-@router.get("/hub")
-def hub_no_slash() -> RedirectResponse:
-    return RedirectResponse("/hub/", status_code=302)
-
-
-@router.get("/hub/")
 def hub(request: Request):
     products = load_products()
     return templates.TemplateResponse(
         request,
         "hub.html",
-        {
-            "products": products,
-            "title": "Fengz Lab",
-        },
+        {"products": products, "title": "Fengz Lab"},
     )
+
+
+@router.get("/hub")
+def hub_no_slash() -> RedirectResponse:
+    return RedirectResponse("/", status_code=301)
+
+
+@router.get("/hub/")
+def hub_slash() -> RedirectResponse:
+    return RedirectResponse("/", status_code=301)

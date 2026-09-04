@@ -9,6 +9,22 @@ templates = Jinja2Templates(directory="app/templates")
 
 _WEEKDAYS_CN = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
 
+_EX_ICONS = {
+    "warmup_jog": "🏃",
+    "easy_run": "🏃",
+    "endurance_run": "🏃",
+    "interval": "⚡",
+    "pullup": "💪",
+    "chinup": "💪",
+    "scapular_pullup": "💪",
+    "dip_support": "🤸",
+    "hanging_knee_raise": "🦵",
+    "lying_leg_raise": "🦵",
+    "crunch": "🔥",
+    "side_plank": "🧘",
+    "plank": "🧘",
+}
+
 
 def cn_date(value) -> str:
     """Format a date as e.g. '9月7日 星期一'."""
@@ -21,6 +37,10 @@ def weekday_cn(value) -> str:
     if value is None:
         return ""
     return _WEEKDAYS_CN[value.weekday()]
+
+
+def ex_icon(key) -> str:
+    return _EX_ICONS.get(key, "🏋️")
 
 
 def reps_display(value) -> str:
@@ -47,5 +67,6 @@ def seconds_display(value) -> str:
 
 templates.env.filters["cn_date"] = cn_date
 templates.env.filters["weekday_cn"] = weekday_cn
+templates.env.filters["ex_icon"] = ex_icon
 templates.env.filters["reps_display"] = reps_display
 templates.env.filters["seconds_display"] = seconds_display

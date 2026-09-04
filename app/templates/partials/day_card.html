@@ -1,11 +1,11 @@
 <section class="day-card" id="day-card">
   <header class="day-head">
     <div class="day-meta">
-      <span class="date">{{ target|cn_date }}</span>
-      <span class="week">Week {{ day.week_number }}</span>
+      <span class="day-date">{{ target|cn_date }}</span>
+      <span class="day-week">Week {{ day.week_number }}</span>
     </div>
-    <div class="day-type">{{ day.day_type }}</div>
-    <span class="status {{ status_meta[day.status].css }}">{{ status_meta[day.status].symbol }} {{ status_meta[day.status].label }}</span>
+    <span class="day-type">{{ day.day_type }}</span>
+    <span class="status-badge {{ status_meta[day.status].css }}">{{ status_meta[day.status].symbol }} {{ status_meta[day.status].label }}</span>
   </header>
 
   {% if finished %}
@@ -28,16 +28,17 @@
           <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
           <button type="submit" class="checkbox {{ 'checked' if log.completed else '' }}">{% if log.completed %}✓{% endif %}</button>
         </form>
-        <div class="exercise-body">
-          <div class="name">{{ log.planned_name }}</div>
-          <div class="plan">
+        <div class="ex-icon">{{ log.exercise_key|ex_icon }}</div>
+        <div class="ex-body">
+          <div class="ex-name">{{ log.planned_name }}</div>
+          <div class="ex-plan">
             {% if log.planned_sets %}<span>{{ log.planned_sets }} 组</span>{% endif %}
             {% if log.planned_reps %}<span>{{ log.planned_reps }}</span>{% endif %}
             {% if log.planned_duration %}<span>{{ log.planned_duration }}</span>{% endif %}
             {% if log.planned_distance %}<span>{{ log.planned_distance }}</span>{% endif %}
             {% if pm.get('detail') %}<span>{{ pm.get('detail') }}</span>{% endif %}
           </div>
-          {% if pm.get('note') %}<div class="coach-note">{{ pm.get('note') }}</div>{% endif %}
+          {% if pm.get('note') %}<div class="ex-coach">{{ pm.get('note') }}</div>{% endif %}
 
           <details class="detail">
             <summary>记录详情</summary>

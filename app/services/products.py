@@ -19,6 +19,10 @@ _FALLBACK_PRODUCTS: list[dict[str, Any]] = [
         "name": "Training Tracker",
         "description": "Personal workout planning and training tracking.",
         "url": "/training/",
+        "icon": "🏋️",
+        "accent": "#6366f1",
+        "accentRGB": "99, 102, 241",
+        "tags": ["training"],
         "enabled": True,
         "order": 10,
     }
