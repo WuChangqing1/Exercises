@@ -63,6 +63,12 @@ def test_dashboard_page_renders(logged_in_client):
     assert "Training" in resp.text
 
 
+def test_main_pages_render(logged_in_client):
+    for path in ("/training/", "/training/calendar", "/training/stats", "/training/settings"):
+        resp = logged_in_client.get(path)
+        assert resp.status_code == 200, path
+
+
 def test_actual_reps_json_roundtrip(db):
     program = plan_loader.load_program()
     day, _, _ = workout.get_or_create_workout_day(db, START, program, START)
