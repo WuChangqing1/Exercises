@@ -21,7 +21,12 @@ mkdir -p instance data backups logs
 echo "==> Preserving local config"
 if [ ! -f .env ]; then
   cp -n .env.example .env
-  echo "Created .env from example — fill in SECRET_KEY."
+  echo "Created .env from example."
+fi
+if ! grep -q '^SECRET_KEY=.\+' .env 2>/dev/null; then
+  key="$(openssl rand -hex 32)"
+  sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${key}/" .env
+  echo "Generated SECRET_KEY (not printed)."
 fi
 if [ ! -f instance/products.yaml ]; then
   cp -n config/products.example.yaml instance/products.yaml
