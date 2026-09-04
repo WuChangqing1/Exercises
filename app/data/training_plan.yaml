@@ -1,0 +1,142 @@
+# Training plan for the 8-week program.
+# Weekday indexes: 0=Monday ... 6=Sunday.
+# week_overrides merges on top of the `weekdays` template per (week, day, exercise_key).
+
+program:
+  name: "8 周训练计划"
+  weeks: 8
+  maintenance_week: 8
+
+weekdays:
+  0:  # Monday — 背部 + 核心
+    type: "背部 + 核心"
+    exercises:
+      - key: warmup_jog
+        name: "热身慢跑"
+        duration: "5 min"
+      - key: pullup
+        name: "引体向上"
+        sets: 4
+        note: "保留约 1~2 次余力"
+      - key: scapular_pullup
+        name: "肩胛引体"
+        sets: 3
+        reps: "8~12"
+      - key: dip_support
+        name: "双杠支撑"
+        sets: 3
+        duration: "20~40 秒"
+      - key: hanging_knee_raise
+        name: "悬垂举膝"
+        sets: 3
+        reps: "8~15"
+      - key: lying_leg_raise
+        name: "仰卧举腿"
+        sets: 3
+        reps: "10~15"
+      - key: plank
+        name: "平板支撑"
+        sets: 3
+        duration: "30~60 秒"
+  1:  # Tuesday — 轻松跑
+    type: "轻松跑"
+    exercises:
+      - key: easy_run
+        name: "轻松跑"
+  2:  # Wednesday — 休息
+    type: "休息"
+    rest: true
+  3:  # Thursday — 背部 + 核心 + 间歇跑
+    type: "背部 + 核心 + 间歇跑"
+    exercises:
+      - key: pullup
+        name: "引体向上"
+        sets: 5
+        note: "最大次数约 50%~70%"
+      - key: chinup
+        name: "反手引体"
+        sets: 3
+        reps: "4~8"
+      - key: hanging_knee_raise
+        name: "悬垂举膝"
+        sets: 3
+        reps: "10~15"
+      - key: crunch
+        name: "卷腹"
+        sets: 3
+        reps: "15~20"
+      - key: side_plank
+        name: "侧平板"
+        sets: 3
+        duration: "30~45 秒 / 每侧"
+      - key: interval
+        name: "间歇跑"
+  4:  # Friday — 休息
+    type: "休息"
+    rest: true
+  5:  # Saturday — 耐力跑
+    type: "耐力跑"
+    exercises:
+      - key: endurance_run
+        name: "耐力跑"
+  6:  # Sunday — 休息 / 可选轻运动
+    type: "休息 / 可选轻运动"
+    rest: true
+
+week_overrides:
+  1:
+    tuesday:
+      easy_run: { duration: "20~30 min", note: "跑 4 min 走 1 min 循环；能说完整句子" }
+    thursday:
+      interval: { detail: "200m 快跑 + 200m 慢跑 × 6", note: "70%~80%，不是冲刺" }
+    saturday:
+      endurance_run: { distance: "3 km", duration: "25~30 min", note: "能够正常说话" }
+  2:
+    tuesday:
+      easy_run: { duration: "20~30 min", note: "跑 4 min 走 1 min 循环；能说完整句子" }
+    thursday:
+      interval: { detail: "200m 快跑 + 200m 慢跑 × 6", note: "70%~80%，不是冲刺" }
+    saturday:
+      endurance_run: { distance: "3 km", duration: "25~30 min", note: "能够正常说话" }
+  3:
+    tuesday:
+      easy_run: { duration: "25~35 min", note: "能说完整句子" }
+    thursday:
+      interval: { detail: "400m 快跑 + 200m 慢跑 × 4~6", note: "75%~85%" }
+    saturday:
+      endurance_run: { distance: "4 km", duration: "30~35 min", note: "能够正常说话" }
+  4:
+    tuesday:
+      easy_run: { duration: "25~35 min", note: "能说完整句子" }
+    thursday:
+      interval: { detail: "400m 快跑 + 200m 慢跑 × 4~6", note: "75%~85%" }
+    saturday:
+      endurance_run: { distance: "4 km", duration: "30~35 min", note: "能够正常说话" }
+  5:
+    tuesday:
+      easy_run: { duration: "25~35 min", note: "能说完整句子" }
+    thursday:
+      interval: { detail: "400m 快跑 + 200m 慢跑 × 4~6", note: "75%~85%" }
+    saturday:
+      endurance_run: { distance: "5 km", duration: "35~40 min", note: "能够正常说话" }
+  6:
+    tuesday:
+      easy_run: { duration: "25~35 min", note: "能说完整句子" }
+    thursday:
+      interval: { detail: "400m 快跑 + 200m 慢跑 × 4~6", note: "75%~85%" }
+    saturday:
+      endurance_run: { distance: "5 km", duration: "35~45 min", note: "能够正常说话" }
+  7:
+    tuesday:
+      easy_run: { duration: "25~35 min", note: "能说完整句子" }
+    thursday:
+      interval: { detail: "400m 快跑 + 200m 慢跑 × 4~6", note: "75%~85%" }
+    saturday:
+      endurance_run: { distance: "5~6 km", duration: "40~50 min", note: "能够正常说话" }
+  8:
+    tuesday:
+      easy_run: { duration: "25~35 min", note: "能说完整句子" }
+    thursday:
+      interval: { detail: "400m 快跑 + 200m 慢跑 × 4~6", note: "75%~85%" }
+    saturday:
+      endurance_run: { distance: "6~7 km", duration: "40~50 min", note: "能够正常说话" }

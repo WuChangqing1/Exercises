@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <script>
+    (function () {
+      var m = window.matchMedia("(prefers-color-scheme: dark)");
+      var set = function () {
+        document.documentElement.setAttribute("data-theme", m.matches ? "dark" : "light");
+      };
+      set();
+      m.addEventListener("change", set);
+    })();
+  </script>
+  <title>{{ title or "Fengz Lab" }}</title>
+  <link rel="stylesheet" href="/static/vendor/pico.min.css" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <main class="container hub">
+    <header class="hub-header">
+      <h1>Fengz Lab</h1>
+      <p class="subtitle">Products &amp; Experiments</p>
+    </header>
+
+    <section class="product-grid">
+      {% for p in products %}
+      <a class="product-card" href="{{ p.url }}">
+        <div class="product-icon">{{ p.icon or "◆" }}</div>
+        <h2>{{ p.name }}</h2>
+        <p>{{ p.description }}</p>
+        <span class="enter">进入 →</span>
+      </a>
+      {% endfor %}
+    </section>
+
+    {% if not products %}
+    <p class="empty">暂无可用产品。</p>
+    {% endif %}
+
+    <footer class="hub-footer">
+      <p>Fengz Lab · Products &amp; Experiments</p>
+    </footer>
+  </main>
+</body>
+</html>

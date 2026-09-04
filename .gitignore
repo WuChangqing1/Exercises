@@ -1,0 +1,53 @@
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# --- Runtime data / databases ---
+*.db
+*.sqlite
+*.sqlite3
+data/*.db
+backups/
+logs/
+instance/*.db
+
+# --- Production-local config (never commit) ---
+products.yaml
+products.local.yaml
+instance/products.yaml
+instance/products.local.yaml
+
+# --- Keys / certificates ---
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# --- Local scratch / temp ---
+.tmp/
+pipwork/
+get-pip.py
+
+# --- Third-party vendor files (fetched on the server) ---
+app/static/vendor/*.js
+app/static/vendor/*.css
+!app/static/vendor/.gitkeep
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

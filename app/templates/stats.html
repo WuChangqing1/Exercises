@@ -1,0 +1,42 @@
+{% extends "training_base.html" %}
+{% block title %}统计 · Training Tracker{% endblock %}
+{% block content %}
+<h1 class="page-title">训练统计</h1>
+
+<section class="stats-grid">
+  <div class="stat-card"><span class="stat-value">{{ summary.completion_rate_this_week }}%</span><span class="stat-label">本周完成率</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.total_completed }}</span><span class="stat-label">总训练次数</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.consecutive_completed_weeks }}</span><span class="stat-label">连续完成周数</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.pullup_total }}</span><span class="stat-label">引体累计次数</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.pullup_max or '—' }}</span><span class="stat-label">引体单组最高</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.plank_max_seconds|seconds_display or '—' }}</span><span class="stat-label">平板最长时间</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.run_this_week_km }}</span><span class="stat-label">本周跑量 (km)</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.run_total_km }}</span><span class="stat-label">累计跑量 (km)</span></div>
+  <div class="stat-card"><span class="stat-value">{{ summary.run_longest_km }}</span><span class="stat-label">最长跑步距离 (km)</span></div>
+  <div class="stat-card"><span class="stat-value">{{ fmt_duration(summary.best_5k_seconds) }}</span><span class="stat-label">5km 最佳成绩</span></div>
+</section>
+
+{% if charts.labels %}
+<section class="charts">
+  <div class="chart-block">
+    <h3>每周训练完成率</h3>
+    <canvas id="chart-completion"></canvas>
+  </div>
+  <div class="chart-block">
+    <h3>引体单组最高趋势</h3>
+    <canvas id="chart-pullup"></canvas>
+  </div>
+  <div class="chart-block">
+    <h3>每周跑量 (km)</h3>
+    <canvas id="chart-run"></canvas>
+  </div>
+</section>
+<script src="/static/vendor/chart.umd.min.js" defer></script>
+<script defer>
+  window.__CHARTS__ = {{ charts|tojson }};
+</script>
+<script src="/static/js/charts.js" defer></script>
+{% else %}
+<p class="empty">暂无数据，先完成一次训练吧。</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "training_base.html" %}
+{% block title %}今日训练 · Training Tracker{% endblock %}
+{% block content %}
+<div class="dashboard-head">
+  <div>
+    <div class="big-date">{{ today|cn_date }}</div>
+    <div class="period">Week {{ day.week_number }} · {{ day.day_type }}</div>
+  </div>
+</div>
+
+{% include "partials/day_card.html" %}
+{% endblock %}

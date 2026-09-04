@@ -1,0 +1,65 @@
+{% extends "training_base.html" %}
+{% block title %}设置 · Training Tracker{% endblock %}
+{% block content %}
+<h1 class="page-title">设置</h1>
+
+{% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+
+<section class="settings-block">
+  <h2>训练周期</h2>
+  <form method="post" action="/training/settings">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+    <label>开始日期（周一）
+      <input type="date" name="program_start_date" value="{{ settings.program_start_date }}" />
+    </label>
+    <label>默认训练时间
+      <input type="time" name="default_training_time" value="{{ settings.default_training_time }}" />
+    </label>
+    <label>时区
+      <input type="text" name="timezone" value="{{ settings.timezone }}" list="tz-list" />
+      <datalist id="tz-list">
+        <option value="Asia/Shanghai"></option>
+        <option value="Asia/Hong_Kong"></option>
+        <option value="UTC"></option>
+      </datalist>
+    </label>
+    <button type="submit">保存设置</button>
+  </form>
+</section>
+
+<section class="settings-block">
+  <h2>修改密码</h2>
+  <form method="post" action="/training/settings/password">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+    <label>当前密码 <input type="password" name="current_password" autocomplete="current-password" required /></label>
+    <label>新密码（至少 8 位）<input type="password" name="new_password" autocomplete="new-password" required /></label>
+    <label>确认新密码 <input type="password" name="confirm_password" autocomplete="new-password" required /></label>
+    <button type="submit">修改密码</button>
+  </form>
+</section>
+
+<section class="settings-block">
+  <h2>数据导出</h2>
+  <div class="btn-row">
+    <a class="button-link" href="/training/export?format=json">完整 JSON</a>
+    <a class="button-link" href="/training/export?format=csv_workout">Workout CSV</a>
+    <a class="button-link" href="/training/export?format=csv_exercise">Exercise CSV</a>
+  </div>
+</section>
+
+<section class="settings-block">
+  <h2>备份</h2>
+  <form method="post" action="/training/backup">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+    <button type="submit">立即备份</button>
+  </form>
+</section>
+
+<section class="settings-block">
+  <h2>账号</h2>
+  <form method="post" action="/training/logout">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+    <button type="submit" class="secondary">退出登录</button>
+  </form>
+</section>
+{% endblock %}

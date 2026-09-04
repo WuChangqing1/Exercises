@@ -1,0 +1,9 @@
+products:
+  - id: training
+    name: Training Tracker
+    description: Personal workout planning and training tracking.
+    url: /training/
+    enabled: true
+    order: 10
+    icon: training
+    category: fitness

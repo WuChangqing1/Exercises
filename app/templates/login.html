@@ -1,0 +1,25 @@
+{% extends "training_base.html" %}
+{% block title %}登录 · Training Tracker{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>Training Tracker</h1>
+  <p class="subtitle">登录以查看今日训练</p>
+
+  {% if error %}
+  <p class="form-error">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="/training/login">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+    <label>
+      用户名
+      <input type="text" name="username" autocomplete="username" required autofocus />
+    </label>
+    <label>
+      密码
+      <input type="password" name="password" autocomplete="current-password" required />
+    </label>
+    <button type="submit" class="primary">登录</button>
+  </form>
+</section>
+{% endblock %}

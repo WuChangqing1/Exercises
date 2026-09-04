@@ -1,0 +1,423 @@
+/* Exercises Platform styles (on top of PicoCSS). */
+:root {
+  --brand: #6366f1;
+  --brand-hover: #818cf8;
+  --card-bg: var(--pico-card-background-color, #fff);
+  --border: var(--pico-muted-border-color, #e2e8f0);
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* ---------- Hub ---------- */
+.container.hub {
+  max-width: 780px;
+  padding-top: 2.5rem;
+}
+
+.hub-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.hub-header h1 {
+  margin-bottom: 0.25rem;
+  font-size: 2.2rem;
+}
+.hub-header .subtitle {
+  color: var(--pico-muted-color);
+  margin-bottom: 0;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.product-card {
+  display: block;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+  color: inherit;
+}
+.product-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand);
+  text-decoration: none;
+}
+.product-icon {
+  font-size: 1.6rem;
+}
+.product-card h2 {
+  margin: 0.4rem 0 0.3rem;
+  font-size: 1.25rem;
+}
+.product-card p {
+  color: var(--pico-muted-color);
+  margin-bottom: 0.75rem;
+}
+.product-card .enter {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.hub-footer {
+  margin-top: 2.5rem;
+  text-align: center;
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+}
+.empty {
+  text-align: center;
+  color: var(--pico-muted-color);
+}
+
+/* ---------- Training shell ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--pico-background-color);
+  z-index: 10;
+}
+.topbar .brand {
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+}
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+}
+.tabs a {
+  text-decoration: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  color: var(--pico-muted-color);
+  font-size: 0.95rem;
+}
+.tabs a.active {
+  background: var(--brand);
+  color: #fff;
+}
+
+.container.training {
+  max-width: 640px;
+  padding-bottom: 3rem;
+}
+.page-title {
+  font-size: 1.4rem;
+  margin: 1rem 0;
+}
+
+/* ---------- Dashboard / day card ---------- */
+.dashboard-head {
+  margin: 1rem 0;
+}
+.big-date {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.period {
+  color: var(--pico-muted-color);
+}
+
+.day-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+}
+.day-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.day-meta .date {
+  font-weight: 600;
+}
+.day-meta .week {
+  margin-left: 0.5rem;
+  color: var(--pico-muted-color);
+  font-size: 0.9rem;
+}
+.day-type {
+  font-weight: 600;
+}
+.status {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+.status-not-started { background: var(--pico-muted-color); color: #fff; }
+.status-partial { background: #f59e0b; color: #111; }
+.status-completed { background: #10b981; color: #fff; }
+.status-skipped { background: #ef4444; color: #fff; }
+.status-rest { background: #64748b; color: #fff; }
+
+.notice {
+  background: #fef9c3;
+  color: #713f12;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+}
+.rest-note {
+  color: var(--pico-muted-color);
+  margin: 0.5rem 0;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.progress-track {
+  flex: 1;
+  height: 10px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+  transition: width 0.2s ease;
+}
+.progress-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.exercise-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.exercise {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.exercise:last-child {
+  border-bottom: none;
+}
+.checkbox {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.checkbox.checked {
+  background: #10b981;
+  border-color: #10b981;
+}
+.exercise.done .name {
+  color: var(--pico-muted-color);
+  text-decoration: line-through;
+}
+.exercise-body {
+  flex: 1;
+  min-width: 0;
+}
+.exercise .name {
+  font-weight: 600;
+}
+.exercise .plan {
+  color: var(--pico-muted-color);
+  font-size: 0.9rem;
+}
+.exercise .plan span {
+  margin-right: 0.6rem;
+}
+.coach-note {
+  font-size: 0.85rem;
+  color: var(--brand);
+  margin-top: 0.2rem;
+}
+.detail {
+  margin-top: 0.4rem;
+}
+.detail summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--pico-muted-color);
+}
+.detail-form {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+@media (min-width: 480px) {
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.skip-row {
+  margin-top: 0.75rem;
+}
+.skip-form {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ---------- Calendar ---------- */
+.calendar {
+  margin: 1rem 0;
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.cal-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.cal-nav {
+  text-decoration: none;
+  font-size: 1.4rem;
+  padding: 0 0.75rem;
+}
+.cal-weekdays,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+.cal-weekdays span {
+  text-align: center;
+  color: var(--pico-muted-color);
+  font-size: 0.8rem;
+  padding: 0.25rem 0;
+}
+.cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.85rem;
+}
+.cal-cell.dim {
+  opacity: 0.35;
+}
+.cal-cell.today {
+  border-color: var(--brand);
+}
+.cal-cell.selected {
+  background: var(--brand);
+  color: #fff;
+}
+.cal-status {
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+/* ---------- Stats ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.stat-label {
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+}
+.chart-block {
+  margin-bottom: 1.5rem;
+}
+.chart-block canvas {
+  max-height: 260px;
+}
+
+/* ---------- Settings / misc ---------- */
+.settings-block {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.settings-block h2 {
+  font-size: 1.1rem;
+}
+.btn-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.button-link {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--brand);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--brand);
+}
+.form-error {
+  color: #ef4444;
+}
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+}

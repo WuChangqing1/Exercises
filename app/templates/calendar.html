@@ -1,0 +1,29 @@
+{% extends "training_base.html" %}
+{% block title %}日历 · Training Tracker{% endblock %}
+{% block content %}
+<section class="calendar">
+  <header class="cal-head">
+    <a class="cal-nav" href="/training/calendar?day={{ prev_month.isoformat() }}">‹</a>
+    <h2>{{ month_label }}</h2>
+    <a class="cal-nav" href="/training/calendar?day={{ next_month.isoformat() }}">›</a>
+  </header>
+
+  <div class="cal-weekdays">
+    <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+  </div>
+
+  <div class="cal-grid">
+    {% for week in grid %}
+      {% for cell in week %}
+      <a class="cal-cell {{ 'dim' if not cell.in_month }} {{ 'today' if cell.is_today }} {{ 'selected' if cell.date == selected.isoformat() }}"
+         href="/training/calendar?day={{ cell.date }}">
+        <span class="cal-day">{{ cell.day }}</span>
+        <span class="cal-status {{ status_meta[cell.status].css }}">{{ status_meta[cell.status].symbol }}</span>
+      </a>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</section>
+
+{% include "partials/day_card.html" %}
+{% endblock %}
