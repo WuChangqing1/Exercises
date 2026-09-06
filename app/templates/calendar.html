@@ -15,13 +15,20 @@
   <div class="cal-grid">
     {% for week in grid %}
       {% for cell in week %}
-      <a class="cal-cell {{ 'dim' if not cell.in_month }} {{ 'today' if cell.is_today }} {{ 'selected' if cell.date == selected.isoformat() }}"
+      <a class="cal-cell cell-status-{{ cell.status }} {{ 'dim' if not cell.in_month }} {{ 'today' if cell.is_today }} {{ 'selected' if cell.date == selected.isoformat() }}"
          href="/training/calendar?day={{ cell.date }}">
         <span class="cal-day">{{ cell.day }}</span>
-        <span class="cal-status {{ status_meta[cell.status].css }}">{{ status_meta[cell.status].symbol }}</span>
+        <span class="cal-status">{{ status_meta[cell.status].symbol }}</span>
       </a>
       {% endfor %}
     {% endfor %}
+  </div>
+
+  <div class="cal-legend">
+    <span><i class="lg lg-exercised"></i>运动了</span>
+    <span><i class="lg lg-missed"></i>没运动</span>
+    <span><i class="lg lg-unrecorded"></i>未记录</span>
+    <span><i class="lg lg-today"></i>今天</span>
   </div>
 </section>
 

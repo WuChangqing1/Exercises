@@ -346,11 +346,9 @@ details summary {
   font-weight: 700;
 }
 
-.status-not-started { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; }
-.status-partial    { background: rgba(245, 158, 11, 0.18); color: #fbbf24; }
-.status-completed  { background: rgba(16, 185, 129, 0.18); color: #34d399; }
-.status-skipped    { background: rgba(244, 63, 94, 0.18); color: #fb7185; }
-.status-rest       { background: rgba(100, 116, 139, 0.22); color: #94a3b8; }
+.status-unrecorded { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+.status-exercised  { background: rgba(16, 185, 129, 0.18); color: #34d399; }
+.status-missed     { background: rgba(244, 63, 94, 0.16); color: #fb7185; }
 
 .notice {
   background: rgba(245, 158, 11, 0.12);
@@ -602,6 +600,14 @@ details summary {
   transition: background 0.12s ease;
 }
 
+.cal-cell.cell-status-exercised {
+  background: rgba(16, 185, 129, 0.16);
+}
+
+.cal-cell.cell-status-missed {
+  background: rgba(244, 63, 94, 0.14);
+}
+
 .cal-cell:hover {
   background: var(--surface-2);
 }
@@ -615,9 +621,27 @@ details summary {
 }
 
 .cal-cell.selected {
-  background: var(--brand-grad);
+  background: var(--brand-grad) !important;
   color: #fff;
   font-weight: 700;
+}
+
+.cal-cell.cell-status-exercised .cal-status {
+  color: #34d399;
+  font-weight: 700;
+}
+
+.cal-cell.cell-status-missed .cal-status {
+  color: #fb7185;
+  font-weight: 700;
+}
+
+.cal-cell.cell-status-unrecorded .cal-status {
+  color: #64748b;
+}
+
+.cal-cell.selected .cal-status {
+  color: #fff;
 }
 
 .cal-status {
@@ -625,6 +649,36 @@ details summary {
   line-height: 1;
   margin-top: 0.15rem;
 }
+
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  justify-content: center;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.cal-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.cal-legend .lg {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.lg-exercised { background: rgba(16, 185, 129, 0.6); }
+.lg-missed { background: rgba(244, 63, 94, 0.55); }
+.lg-unrecorded { background: rgba(100, 116, 139, 0.35); }
+.lg-today { background: transparent; border: 2px solid var(--brand-1); }
 
 /* ---------- Stats ---------- */
 .stats-grid {
@@ -688,6 +742,110 @@ details summary {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+/* ---------- Record UI ---------- */
+.record-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0.4rem;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.missed-note,
+.rest-hint {
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  color: #fda4af;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  margin-bottom: 0.75rem;
+}
+
+.rest-hint {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+}
+
+.tag-suggest {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.16);
+  color: #a5b4fc;
+  margin-right: 0.5rem;
+}
+
+.empty-mini {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  padding: 0.4rem 0;
+  margin: 0;
+}
+
+/* add own activity */
+.add-form {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.6rem 0 0.25rem;
+}
+
+.add-form input {
+  flex: 1;
+  margin-top: 0;
+}
+
+.add-btn {
+  white-space: nowrap;
+  margin-top: 0;
+}
+
+.del-form {
+  margin: 0.15rem 0 0 0.2rem;
+}
+
+.del-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.del-btn:hover {
+  color: #fb7185;
+  border-color: #fb7185;
+}
+
+.missed-block {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border-strong);
+}
+
+.missed-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+.missed-form input {
+  flex: 1;
+  min-width: 12rem;
+  margin-top: 0;
 }
 
 /* ---------- Utilities ---------- */

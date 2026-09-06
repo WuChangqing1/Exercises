@@ -11,11 +11,9 @@ from app.models import AppSettings
 from app.services import plan_loader, schedule, workout
 
 STATUS_META = {
-    "not_started": {"label": "未开始", "symbol": "○", "css": "status-not-started"},
-    "partial": {"label": "部分完成", "symbol": "△", "css": "status-partial"},
-    "completed": {"label": "完成", "symbol": "✓", "css": "status-completed"},
-    "skipped": {"label": "跳过", "symbol": "×", "css": "status-skipped"},
-    "rest": {"label": "休息", "symbol": "—", "css": "status-rest"},
+    "exercised": {"label": "运动了", "symbol": "✓", "css": "status-exercised"},
+    "missed": {"label": "没运动", "symbol": "×", "css": "status-missed"},
+    "unrecorded": {"label": "未记录", "symbol": "○", "css": "status-unrecorded"},
 }
 
 
@@ -44,10 +42,7 @@ def day_card_context(db: Session, target: date) -> dict[str, Any]:
     day, plan, finished = workout.get_or_create_workout_day(db, target, program, start)
     today = schedule.today_in_tz(settings_row.timezone)
 
-    total = len(day.logs)
-    done = sum(1 for log in day.logs if log.completed)
-    pct = int(round(done / total * 100)) if total else 0
-
+    status = workout.effective_status(day)
     plan_map = {ex.get("key"): ex for ex in plan.get("exercises", []) if isinstance(ex, dict)}
 
     return {
@@ -57,8 +52,8 @@ def day_card_context(db: Session, target: date) -> dict[str, Any]:
         "finished": finished,
         "target": target,
         "is_today": target == today,
+        "status": status,
         "status_meta": STATUS_META,
-        "progress_done": done,
-        "progress_total": total,
-        "progress_pct": pct,
+        "has_checked": any(log.completed for log in day.logs),
+        "suggested_rest": bool(plan.get("rest", False)),
     }

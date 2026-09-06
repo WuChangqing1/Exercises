@@ -8,30 +8,40 @@
     plugins: { legend: { display: false } },
   };
 
-  new Chart(document.getElementById("chart-completion"), {
-    type: "bar",
-    data: {
-      labels: data.labels,
-      datasets: [{ label: "完成率", data: data.completion, backgroundColor: "#6366f1" }],
-    },
-    options: Object.assign({}, base, { scales: { y: { max: 100, beginAtZero: true } } }),
-  });
+  var exists = function (id) {
+    return document.getElementById(id) !== null;
+  };
 
-  new Chart(document.getElementById("chart-pullup"), {
-    type: "line",
-    data: {
-      labels: data.labels,
-      datasets: [{ label: "单组最高", data: data.pullup_max, borderColor: "#10b981", fill: false, tension: 0.3 }],
-    },
-    options: base,
-  });
+  if (exists("chart-exercised")) {
+    new Chart(document.getElementById("chart-exercised"), {
+      type: "bar",
+      data: {
+        labels: data.labels,
+        datasets: [{ label: "运动天数", data: data.exercised, backgroundColor: "#10b981" }],
+      },
+      options: Object.assign({}, base, { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }),
+    });
+  }
 
-  new Chart(document.getElementById("chart-run"), {
-    type: "bar",
-    data: {
-      labels: data.labels,
-      datasets: [{ label: "跑量 km", data: data.run_km, backgroundColor: "#f59e0b" }],
-    },
-    options: base,
-  });
+  if (exists("chart-pullup")) {
+    new Chart(document.getElementById("chart-pullup"), {
+      type: "line",
+      data: {
+        labels: data.labels,
+        datasets: [{ label: "单组最高", data: data.pullup_max, borderColor: "#6366f1", fill: false, tension: 0.3 }],
+      },
+      options: base,
+    });
+  }
+
+  if (exists("chart-run")) {
+    new Chart(document.getElementById("chart-run"), {
+      type: "bar",
+      data: {
+        labels: data.labels,
+        datasets: [{ label: "跑量 km", data: data.run_km, backgroundColor: "#f59e0b" }],
+      },
+      options: base,
+    });
+  }
 })();

@@ -4,91 +4,79 @@
       <span class="day-date">{{ target|cn_date }}</span>
       <span class="day-week">Week {{ day.week_number }}</span>
     </div>
-    <span class="day-type">{{ day.day_type }}</span>
-    <span class="status-badge {{ status_meta[day.status].css }}">{{ status_meta[day.status].symbol }} {{ status_meta[day.status].label }}</span>
+    <span class="day-type">建议：{{ day.day_type }}</span>
+    <span class="status-badge {{ status_meta[status].css }}">{{ status_meta[status].symbol }} {{ status_meta[status].label }}</span>
   </header>
 
   {% if finished %}
   <p class="notice">当前训练周期已经完成，可以开始新的训练周期。</p>
   {% endif %}
 
-  {% if day.status == 'rest' %}
-    <p class="rest-note">今天是休息日。</p>
-  {% else %}
-    <div class="progress">
-      <div class="progress-track"><span class="progress-fill" style="width: {{ progress_pct }}%"></span></div>
-      <span class="progress-text">{{ progress_done }} / {{ progress_total }}</span>
-    </div>
+  {% if status == 'missed' %}
+  <p class="missed-note">今天没运动{% if day.skip_reason %} · 原因：{{ day.skip_reason }}{% endif %}。如果其实运动了，勾选下面任一动作即可撤销。</p>
+  {% endif %}
 
-    <ul class="exercise-list">
-      {% for log in day.logs %}
-      {% set pm = plan_map.get(log.exercise_key, {}) %}
-      <li class="exercise {{ 'done' if log.completed else '' }}">
-        <form class="toggle-form" hx-post="/training/exercise/{{ log.id }}/toggle" hx-target="#day-card" hx-swap="outerHTML">
-          <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
-          <button type="submit" class="checkbox {{ 'checked' if log.completed else '' }}">{% if log.completed %}✓{% endif %}</button>
-        </form>
-        <div class="ex-icon">{{ log.exercise_key|ex_icon }}</div>
-        <div class="ex-body">
-          <div class="ex-name">{{ log.planned_name }}</div>
-          <div class="ex-plan">
+  <h3 class="record-title">今天做了什么（勾选 = 今天做了）</h3>
+
+  {% if suggested_rest and not day.logs %}
+  <p class="rest-hint">今日建议休息。当然，你也可以在下面记录今天做过的其他运动。</p>
+  {% endif %}
+
+  {% if day.logs %}
+  <ul class="exercise-list">
+    {% for log in day.logs %}
+    {% set custom = log.exercise_key == 'custom' %}
+    <li class="exercise {{ 'done' if log.completed else '' }}">
+      <form class="toggle-form" hx-post="/training/exercise/{{ log.id }}/toggle" hx-target="#day-card" hx-swap="outerHTML">
+        <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+        <button type="submit" class="checkbox {{ 'checked' if log.completed else '' }}">{% if log.completed %}✓{% endif %}</button>
+      </form>
+      <div class="ex-icon">{{ log.exercise_key|ex_icon if not custom else '🏅' }}</div>
+      <div class="ex-body">
+        <div class="ex-name">{{ log.planned_name }}</div>
+        {% if not custom %}
+          {% set pm = plan_map.get(log.exercise_key, {}) %}
+          {% if log.planned_sets or log.planned_reps or log.planned_duration or log.planned_distance or pm.get('detail') %}
+          <div class="ex-plan"><span class="tag-suggest">建议</span>
             {% if log.planned_sets %}<span>{{ log.planned_sets }} 组</span>{% endif %}
             {% if log.planned_reps %}<span>{{ log.planned_reps }}</span>{% endif %}
             {% if log.planned_duration %}<span>{{ log.planned_duration }}</span>{% endif %}
             {% if log.planned_distance %}<span>{{ log.planned_distance }}</span>{% endif %}
             {% if pm.get('detail') %}<span>{{ pm.get('detail') }}</span>{% endif %}
           </div>
+          {% endif %}
           {% if pm.get('note') %}<div class="ex-coach">{{ pm.get('note') }}</div>{% endif %}
+        {% endif %}
+      </div>
+      {% if custom %}
+      <form class="del-form" hx-post="/training/exercise/{{ log.id }}/delete" hx-target="#day-card" hx-swap="outerHTML">
+        <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+        <button type="submit" class="del-btn" aria-label="移除" title="移除">✕</button>
+      </form>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty-mini">还没有记录。</p>
+  {% endif %}
 
-          <details class="detail">
-            <summary>记录详情</summary>
-            <form class="detail-form" hx-post="/training/exercise/{{ log.id }}/update" hx-target="#day-card" hx-swap="outerHTML">
-              <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
-              <div class="grid-2">
-                <label>组数
-                  <input type="number" name="actual_sets" min="0" value="{{ log.actual_sets or '' }}" />
-                </label>
-                <label>每组次数（如 5 5 4 3）
-                  <input type="text" name="actual_reps" value="{{ log.actual_reps|reps_display }}" />
-                </label>
-                <label>时间（秒或 M:SS）
-                  <input type="text" name="actual_duration" value="{{ log.actual_duration_seconds|seconds_display }}" />
-                </label>
-                <label>距离（公里）
-                  <input type="number" name="actual_distance" step="0.01" min="0" value="{{ '%.2f'|format(log.actual_distance_meters / 1000) if log.actual_distance_meters else '' }}" />
-                </label>
-                <label>RPE (1~10)
-                  <input type="number" name="rpe" min="1" max="10" value="{{ log.rpe or '' }}" />
-                </label>
-                <label>备注
-                  <input type="text" name="note" value="{{ log.note or '' }}" />
-                </label>
-              </div>
-              <button type="submit" class="secondary">保存详情</button>
-            </form>
-          </details>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
+  <form class="add-form" hx-post="/training/exercise/add" hx-target="#day-card" hx-swap="outerHTML">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+    <input type="hidden" name="date" value="{{ target.isoformat() }}" />
+    <input type="text" name="name" placeholder="记录其他运动，如：打羽毛球 / 跳绳 20 分钟" required maxlength="128" />
+    <button type="submit" class="secondary add-btn">+ 添加</button>
+  </form>
 
-    <div class="skip-row">
-      <details>
-        <summary class="secondary">跳过今天</summary>
-        <form class="skip-form" hx-post="/training/skip" hx-target="#day-card" hx-swap="outerHTML">
-          <input type="hidden" name="date" value="{{ target.isoformat() }}" />
-          <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
-          <select name="reason">
-            <option value="">无理由</option>
-            <option value="太忙">太忙</option>
-            <option value="身体疲劳">身体疲劳</option>
-            <option value="身体不舒服">身体不舒服</option>
-            <option value="天气">天气</option>
-            <option value="其他">其他</option>
-          </select>
-          <button type="submit" class="secondary">确认跳过</button>
-        </form>
-      </details>
-    </div>
+  {% if not has_checked and status != 'missed' %}
+  <div class="missed-block">
+    <p class="muted">今天没有运动？可以记一下原因：</p>
+    <form class="missed-form" hx-post="/training/missed" hx-target="#day-card" hx-swap="outerHTML">
+      <input type="hidden" name="csrf_token" value="{{ request.session.get('csrf_token','') }}" />
+      <input type="hidden" name="date" value="{{ target.isoformat() }}" />
+      <input type="text" name="reason" placeholder="原因（可选）：太忙 / 累了 / 不舒服 / 天气..." maxlength="255" />
+      <button type="submit" class="secondary">记：今天没运动</button>
+    </form>
+  </div>
   {% endif %}
 </section>

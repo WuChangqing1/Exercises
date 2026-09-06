@@ -9,14 +9,14 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.models import ExerciseLog, WorkoutDay
-from app.services.workout import serialize_day
+from app.services import workout
 
 
 def export_json(db: Session) -> str:
     days = db.query(WorkoutDay).order_by(WorkoutDay.date).all()
     payload: dict[str, Any] = {
         "version": 1,
-        "workout_days": [serialize_day(day) for day in days],
+        "workout_days": [workout.serialize_day(day) for day in days],
     }
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
@@ -33,7 +33,7 @@ def export_workout_csv(db: Session) -> str:
                 day.date,
                 day.week_number,
                 day.day_type,
-                day.status,
+                workout.effective_status(day),
                 day.skip_reason or "",
                 day.note or "",
                 day.completed_at.isoformat() if day.completed_at else "",

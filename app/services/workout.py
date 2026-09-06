@@ -1,4 +1,13 @@
-"""Workout-day materialization, status computation, and log updates."""
+"""Workout-day materialization, status computation, and log updates.
+
+Day statuses (canonical):
+- exercised   — at least one activity is checked: the user exercised that day.
+- missed      — the user explicitly recorded that they did NOT exercise (reason optional).
+- unrecorded  — the day exists but no decision has been recorded yet.
+
+The recommended plan is shown purely as a reference; the user checks whatever
+they actually did, and can add their own activities.
+"""
 from __future__ import annotations
 
 from datetime import date, datetime
@@ -10,6 +19,36 @@ from sqlalchemy.orm import Session
 from app.models import ExerciseLog, WorkoutDay
 from app.services import plan_loader, schedule
 
+CUSTOM_KEY = "custom"
+
+_EXERCISED_LEGACY = {"partial", "completed", "exercised"}
+_MISSED_LEGACY = {"skipped"}
+
+
+def effective_status(day: WorkoutDay) -> str:
+    """Canonical status for display/logic; normalizes any legacy status strings."""
+    s = day.status
+    if s == "missed" or s in _MISSED_LEGACY:
+        return "missed"
+    if s in _EXERCISED_LEGACY:
+        return "exercised"
+    if any(log.completed for log in day.logs):
+        return "exercised"
+    return "unrecorded"
+
+
+def recompute_status(day: WorkoutDay) -> str:
+    """Persist status derived from the checked activities (after any change)."""
+    has_any = any(log.completed for log in day.logs)
+    status = "exercised" if has_any else "unrecorded"
+    if status == "exercised":
+        if day.status == "missed":
+            day.skip_reason = None
+        if not day.completed_at:
+            day.completed_at = datetime.utcnow()
+    day.status = status
+    return status
+
 
 def get_or_create_workout_day(
     db: Session,
@@ -17,7 +56,7 @@ def get_or_create_workout_day(
     program: dict[str, Any],
     start_date: date,
 ) -> tuple[WorkoutDay, dict[str, Any], bool]:
-    """Return (workout_day, day_plan, finished) creating rows on first access."""
+    """Return (workout_day, day_plan, finished), creating rows on first access."""
     date_str = target.isoformat()
     day = db.scalar(select(WorkoutDay).where(WorkoutDay.date == date_str))
     if day is not None:
@@ -32,11 +71,12 @@ def get_or_create_workout_day(
         date=date_str,
         week_number=week,
         day_type=plan["type"],
-        status="rest" if plan["rest"] else "not_started",
+        status="unrecorded",
     )
     db.add(day)
     db.flush()
 
+    # Seed the recommended activities as optional, unchecked rows.
     for ex in plan["exercises"]:
         log = ExerciseLog(
             workout_day_id=day.id,
@@ -54,45 +94,53 @@ def get_or_create_workout_day(
     return day, plan, finished
 
 
-def recompute_status(day: WorkoutDay) -> str:
-    """Derive status from exercise logs; called after any log change."""
-    if day.status == "skipped":
-        return "skipped"
-    if day.status == "rest":
-        return "rest"
-
-    logs = day.logs
-    if not logs:
-        return "not_started"
-
-    completed = sum(1 for log in logs if log.completed)
-    if completed == 0:
-        status = "not_started"
-    elif completed == len(logs):
-        status = "completed"
-        day.completed_at = datetime.utcnow()
-    else:
-        status = "partial"
-    day.status = status
-    return status
-
-
 def toggle_log(db: Session, day: WorkoutDay, log: ExerciseLog) -> WorkoutDay:
+    """Check/uncheck one activity; the day becomes exercised when any is checked."""
     log.completed = not log.completed
     log.completed_at = datetime.utcnow() if log.completed else None
-    # Checking a box on a skipped day un-skips it.
-    if day.status == "skipped":
-        day.status = "not_started"
-        day.skip_reason = None
     recompute_status(day)
     db.commit()
     db.refresh(day)
     return day
 
 
-def skip_day(db: Session, day: WorkoutDay, reason: str | None) -> WorkoutDay:
-    day.status = "skipped"
+def mark_missed(db: Session, day: WorkoutDay, reason: str | None) -> WorkoutDay:
+    """Record that the user did not exercise on this day."""
+    day.status = "missed"
     day.skip_reason = reason or None
+    db.commit()
+    db.refresh(day)
+    return day
+
+
+def add_custom_log(
+    db: Session, day: WorkoutDay, name: str, note: str | None = None
+) -> ExerciseLog:
+    """Record an activity the user did that is not part of the recommendation."""
+    log = ExerciseLog(
+        workout_day_id=day.id,
+        exercise_key=CUSTOM_KEY,
+        planned_name=(name or "").strip()[:128],
+        note=note or None,
+        completed=True,
+        completed_at=datetime.utcnow(),
+    )
+    db.add(log)
+    db.flush()
+    db.expire(day, ["logs"])
+    recompute_status(day)
+    db.commit()
+    db.refresh(day)
+    db.refresh(log)
+    return log
+
+
+def delete_log(db: Session, day: WorkoutDay, log: ExerciseLog) -> WorkoutDay:
+    """Remove a (custom) activity record from the day."""
+    db.delete(log)
+    db.flush()
+    db.expire(day, ["logs"])
+    recompute_status(day)
     db.commit()
     db.refresh(day)
     return day
@@ -118,7 +166,7 @@ def serialize_day(day: WorkoutDay) -> dict[str, Any]:
         "date": day.date,
         "week_number": day.week_number,
         "day_type": day.day_type,
-        "status": day.status,
+        "status": effective_status(day),
         "skip_reason": day.skip_reason,
         "note": day.note,
         "completed_at": day.completed_at.isoformat() if day.completed_at else None,

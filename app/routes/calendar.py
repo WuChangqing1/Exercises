@@ -5,13 +5,13 @@ from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.database import get_db
 from app.models import WorkoutDay
 from app.routes.helpers import day_card_context, get_tz
 from app.security import require_user
-from app.services import schedule
+from app.services import schedule, workout
 from app.templating import templates
 
 router = APIRouter(prefix="/training", tags=["calendar"])
@@ -30,7 +30,7 @@ def build_month_grid(year: int, month: int, status_map: dict[str, str], today: d
                     "date": d.isoformat(),
                     "day": d.day,
                     "in_month": d.month == month,
-                    "status": status_map.get(d.isoformat(), "not_started"),
+                    "status": status_map.get(d.isoformat(), "unrecorded"),
                     "is_today": d == today,
                 }
             )
@@ -49,8 +49,8 @@ def calendar_page(
     today = schedule.today_in_tz(tz)
     selected = date.fromisoformat(day) if day else today
 
-    days = list(db.scalars(select(WorkoutDay)).all())
-    status_map = {d.date: d.status for d in days}
+    days = list(db.scalars(select(WorkoutDay).options(selectinload(WorkoutDay.logs))).all())
+    status_map = {d.date: workout.effective_status(d) for d in days}
 
     ctx = day_card_context(db, selected)
     ctx.update(
